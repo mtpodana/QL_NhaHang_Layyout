@@ -9,14 +9,19 @@ function HoaDon(props) {
   const [isOpenEdit, setOpenEdit] = useState(false);
   const [nhapKho, setNhapKho] = useState([])
   const [idCurrent, setIdCurrent] = useState()
+  const [search, setSearch] = useState()
 
   useEffect(() => {
-    fetchNhapKho()
-  }, [])
+    fetchNhapKho(search)
+  }, [search])
 
   async function fetchNhapKho() {
     try {
-      const resp = await axiosInstance.get('/NhapKho');
+      let query="";
+      if(search)
+        query = '?date='+search;
+      console.log("Search date", search)
+      const resp = await axiosInstance.get('/NhapKho'+query);
       console.log(resp.data);
       setNhapKho(resp.data.result)
     } catch (err) {
@@ -62,11 +67,13 @@ function HoaDon(props) {
         <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search search-form">
           <div className="input-group">
             <input
-              type="text"
+              type="date"
               className="form-control bg-light border-0 small"
-              placeholder="Search for..."
+              placeholder="Tim kiem"
               aria-label="Search"
               aria-describedby="basic-addon2"
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
             />
             <div className="input-group-append">
               <button className="btn btn-primary" type="button">

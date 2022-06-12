@@ -10,15 +10,25 @@ function HoaDon(props) {
   const [datBan, setDatBan] = useState([])
   const [id, setId] = useState({})
 
+  const [ten, setTen] = useState()
+  const [date, setDate] = useState()
 
 
   useEffect(() => {
-    fetchDatBan()
-  }, [])
+    fetchDatBan(ten,null)
+  }, [ten])
+  useEffect(() => {
+    fetchDatBan(null,date)
+  }, [date])
 
-  async function fetchDatBan() {
+  async function fetchDatBan(ten,date) {
     try {
-      const resp = await axiosInstance.get('/DatBan');
+      let query = ''
+      if(ten)
+      query = `?ten=${ten}`
+      if(date)
+      query = `?date=${date}`
+      const resp = await axiosInstance.get('/DatBan'+query);
       console.log(resp.data);
       resp.data.result.forEach(el => {
         const date = new Date(el.ThoiGianDat)
@@ -65,6 +75,8 @@ function HoaDon(props) {
               placeholder="Tìm theo tên "
               aria-label="Search"
               aria-describedby="basic-addon2"
+              value={ten}
+              onChange={(e)=>setTen(e.target.value)}
             />
             <div className="input-group-append">
               <button className="btn btn-primary" type="button">
@@ -81,6 +93,8 @@ function HoaDon(props) {
               placeholder="Tìm theo ngày"
               aria-label="Search"
               aria-describedby="basic-addon2"
+              value={date}
+              onChange={(e)=>setDate(e.target.value)}
             />
             <div className="input-group-append">
               <button className="btn btn-primary" type="button">

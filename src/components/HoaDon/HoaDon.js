@@ -8,21 +8,37 @@ function HoaDon(props) {
   const [isOpenEdit, setOpenEdit] = useState(false);
   const [hoaDon, setHoaDon] = useState([])
   const [current, setCurrent] = useState({})
+  const [search, setSearch] = useState()
 
   useEffect(() => {
-    fetchNguyenLieu()
+    fetchNguyenLieu(search)
 
-  }, [])
+  }, [search])
 
-  async function fetchNguyenLieu() {
+  async function fetchNguyenLieu(search) {
     try {
-      const resp = await axiosInstance.get('/HoaDon');
+      let query =''
+      if(search)
+        query = '?date=' + search
+      const resp = await axiosInstance.get('/HoaDon'+query);
       console.log(resp.data);
       setHoaDon(resp.data.result)
     } catch (err) {
       console.error(err);
     }
   }
+
+  async function xoaHoaDon(id) {
+    try {
+      const resp = await axiosInstance.delete('/HoaDon/'+id);
+      console.log(resp.data);
+      if(resp.data.ok)
+        fetchNguyenLieu()
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <>
       <div style={{ position: "relative", marginBottom: "20px" }}>
@@ -30,11 +46,13 @@ function HoaDon(props) {
         <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search search-form">
           <div className="input-group">
             <input
-              type="text"
+              type="date"
               className="form-control bg-light border-0 small"
               placeholder="Search for..."
               aria-label="Search"
               aria-describedby="basic-addon2"
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
             />
             <div className="input-group-append">
               <button className="btn btn-primary" type="button">
@@ -108,6 +126,9 @@ function HoaDon(props) {
                             outline: "none",
                             border: "none",
                             background: "none",
+                          }}
+                          onClick={()=>{
+                            xoaHoaDon(item.IDHoaDon)
                           }}
                         >
                           <i className="fa-solid fa-trash" />

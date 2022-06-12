@@ -9,16 +9,21 @@ function TonKho(props) {
   const [isOpenExport, setOpenExport] = useState(false);
   const [dsNguyenLieu, setDsNguyenLieu] = useState([]);
   const [idCurrent, setIDCurrent] = useState();
+  const [tenNguyenLieu, setTenNguyenLieu] = useState()
+
 
 
   useEffect(() => {
-    fetchNguyenLieu()
+    fetchNguyenLieu(tenNguyenLieu)
 
-  }, [])
+  }, [tenNguyenLieu])
 
-  async function fetchNguyenLieu() {
+  async function fetchNguyenLieu(tenNguyenLieu) {
     try {
-      const resp = await axiosInstance.get('/TonKho/NguyenLieu');
+      let query =''
+      if(tenNguyenLieu)
+        query = '?TenNguyenLieu='+tenNguyenLieu
+      const resp = await axiosInstance.get('/TonKho/NguyenLieu'+query);
       console.log(resp.data);
       setDsNguyenLieu(resp.data.result)
     } catch (err) {
@@ -42,11 +47,13 @@ function TonKho(props) {
         <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search search-form">
           <div className="input-group">
             <input
-              type="text"
+              type={"text"}
               className="form-control bg-light border-0 small"
               placeholder="Search for..."
               aria-label="Search"
               aria-describedby="basic-addon2"
+              value={tenNguyenLieu}
+              onChange={(e)=>setTenNguyenLieu(e.target.value)}
             />
             <div className="input-group-append">
               <button className="btn btn-primary" type="button">
